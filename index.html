@@ -33,8 +33,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0d13">
+<meta name="theme-color" content="#0a0d13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eceff5" media="(prefers-color-scheme: light)">
+<meta name="description" content="Central de acesso aos sistemas de apontamento da linha — SESÉ. Instale como app no celular ou no PC.">
 <title>Central de Apontamentos Operacionais · SESÉ</title>
+
+<!-- ===== APP (PWA): instalável no celular e no PC ===== -->
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Apontamentos">
+<meta name="application-name" content="Apontamentos">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,6 +83,11 @@
     -webkit-font-smoothing:antialiased;
     display:flex; flex-direction:column;
     padding:clamp(18px,4vw,40px);
+    /* respeita o notch / barra de status quando aberto como app em tela cheia */
+    padding-top:max(clamp(18px,4vw,40px), calc(env(safe-area-inset-top) + 12px));
+    padding-left:max(clamp(18px,4vw,40px), env(safe-area-inset-left));
+    padding-right:max(clamp(18px,4vw,40px), env(safe-area-inset-right));
+    padding-bottom:max(clamp(18px,4vw,40px), env(safe-area-inset-bottom));
     position:relative; overflow-x:hidden;
     transition:background .4s ease,color .4s ease;
   }
@@ -203,6 +222,48 @@
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important; transition:none !important}
   }
+
+  /* ---------- Botão "Instalar app" ---------- */
+  .install{
+    display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 14px;
+    border-radius:11px; cursor:pointer; white-space:nowrap;
+    background:var(--amber-soft); color:var(--amber); border:1px solid var(--amber);
+    font-family:"JetBrains Mono",monospace; font-size:.7rem; letter-spacing:.12em;
+    text-transform:uppercase; font-weight:700;
+    transition:transform .15s ease, box-shadow .25s ease, background .2s ease;
+  }
+  .install:hover{transform:translateY(-1px); box-shadow:0 10px 24px -12px var(--amber)}
+  .install:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
+  .install .ic{font-size:1rem; line-height:1}
+  .install[hidden]{display:none}
+
+  /* ---------- Dica iOS: adicionar à tela de início ---------- */
+  .ios-hint{
+    position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom));
+    transform:translateX(-50%); z-index:60;
+    width:min(520px, calc(100% - 24px));
+    display:flex; align-items:center; gap:13px;
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:15px; padding:13px 14px; box-shadow:var(--shadow);
+    animation:hintUp .5s cubic-bezier(.2,.7,.2,1);
+  }
+  .ios-hint .ic{flex:0 0 auto; width:40px; height:40px; border-radius:11px; display:grid;
+                place-items:center; color:var(--amber);
+                background:color-mix(in srgb,var(--amber) 16%, transparent);
+                border:1px solid color-mix(in srgb,var(--amber) 34%, transparent)}
+  .ios-hint p{margin:0; font-size:.82rem; color:var(--ink-dim); line-height:1.38}
+  .ios-hint strong{color:var(--ink); font-weight:600}
+  .ios-hint .shareico{vertical-align:-3px; margin:0 1px}
+  .ios-hint .close{flex:0 0 auto; width:30px; height:30px; border-radius:9px; cursor:pointer;
+                   background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+                   font-size:1rem; line-height:1; display:grid; place-items:center;
+                   transition:border-color .2s, color .2s}
+  .ios-hint .close:hover{border-color:var(--amber); color:var(--ink)}
+  .ios-hint[hidden]{display:none}
+  @keyframes hintUp{from{opacity:0; transform:translateX(-50%) translateY(16px)}
+                    to{opacity:1; transform:translateX(-50%) translateY(0)}}
+
+  @media (max-width:400px){ .install{letter-spacing:.06em; padding:0 11px} }
 </style>
 </head>
 <body>
@@ -223,6 +284,13 @@
           <div class="clock" id="clock">--:--:--</div>
           <div class="date" id="date">—</div>
         </div>
+        <button class="install" id="install" type="button" hidden aria-label="Instalar aplicativo">
+          <svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/>
+          </svg>
+          <span class="txt">Instalar app</span>
+        </button>
         <button class="toggle" id="toggle" type="button" aria-label="Alternar tema claro/escuro">☀️</button>
       </div>
     </header>
@@ -238,6 +306,22 @@
     </footer>
     <div class="credit">Desenvolvido por Ivan Carlos Antoneli</div>
   </div>
+
+  <!-- Dica p/ iPhone e iPad (o iOS não oferece botão automático de instalar) -->
+  <aside class="ios-hint" id="iosHint" hidden role="note">
+    <span class="ic" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/>
+      </svg>
+    </span>
+    <p>Instale na tela de início: toque em <strong>Compartilhar</strong><svg class="shareico" width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path
+        d="M6 12v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg> e depois em
+        <strong>Adicionar à Tela de Início</strong>.</p>
+    <button class="close" id="iosHintClose" type="button" aria-label="Dispensar dica">✕</button>
+  </aside>
 
 <script>
   /* ===== Lista de ferramentas — edite aqui =====
@@ -320,6 +404,59 @@
     try { localStorage.setItem("sese-tema", next); } catch(e){}
     paintToggle();
   });
+
+  /* ===== App (PWA): instalar no aparelho + abrir offline ===== */
+  (function(){
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+                      || window.navigator.standalone === true;   // já instalado
+
+    /* -- Botão "Instalar app" (Android, Chrome, Edge, Windows, Mac...) -- */
+    const installBtn = document.getElementById("install");
+    let deferredPrompt = null;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();                 // guardamos p/ disparar no clique
+      deferredPrompt = e;
+      if (!isStandalone) installBtn.hidden = false;
+    });
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      installBtn.disabled = true;
+      deferredPrompt.prompt();
+      try { await deferredPrompt.userChoice; } catch(e){}
+      deferredPrompt = null;
+      installBtn.hidden = true;
+      installBtn.disabled = false;
+    });
+    window.addEventListener("appinstalled", () => {
+      installBtn.hidden = true;
+      deferredPrompt = null;
+      const h = document.getElementById("iosHint"); if (h) h.hidden = true;
+    });
+
+    /* -- Dica no iPhone/iPad (o Safari não tem instalação automática) -- */
+    const ua = navigator.userAgent || "";
+    const isIOS = /iPad|iPhone|iPod/.test(ua)
+               || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS
+    const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    let dismissed = false;
+    try { dismissed = localStorage.getItem("sese-ios-hint") === "1"; } catch(e){}
+    const iosHint = document.getElementById("iosHint");
+    if (isIOS && isSafari && !isStandalone && !dismissed && iosHint) {
+      setTimeout(() => { iosHint.hidden = false; }, 900);
+    }
+    const closeBtn = document.getElementById("iosHintClose");
+    if (closeBtn) closeBtn.addEventListener("click", () => {
+      iosHint.hidden = true;
+      try { localStorage.setItem("sese-ios-hint", "1"); } catch(e){}
+    });
+
+    /* -- Service worker: guarda o painel p/ abrir mesmo sem internet -- */
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  })();
 </script>
 </body>
 </html>
