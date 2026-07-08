@@ -264,6 +264,88 @@
                     to{opacity:1; transform:translateX(-50%) translateY(0)}}
 
   @media (max-width:400px){ .install{letter-spacing:.06em; padding:0 11px} }
+
+  /* ================= "Como instalar" — botão + modal ================= */
+  .howto-btn{display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    background:var(--amber); border:1px solid var(--amber); color:#0a0d13; border-radius:12px;
+    padding:11px 18px; font-family:"Poppins",sans-serif; font-size:.9rem; font-weight:600; letter-spacing:.005em;
+    box-shadow:0 10px 24px -12px rgba(242,168,29,.85);
+    animation:howtoGlow 2.8s ease-in-out infinite;
+    transition:transform .15s ease, filter .2s ease}
+  .howto-btn:hover{transform:translateY(-2px); filter:brightness(1.06)}
+  .howto-btn:focus-visible{outline:2px solid var(--amber); outline-offset:3px}
+  .howto-btn svg{width:18px; height:18px}
+  @keyframes howtoGlow{
+    0%,100%{box-shadow:0 10px 24px -12px rgba(242,168,29,.85), 0 0 0 0 rgba(242,168,29,.30)}
+    50%{box-shadow:0 12px 28px -10px rgba(242,168,29,1), 0 0 0 7px rgba(242,168,29,0)}
+  }
+
+  .hw-overlay{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
+    padding:16px; background:rgba(4,6,10,.66); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px)}
+  .hw-overlay.open{display:flex; animation:hwFade .2s ease}
+  body.hw-lock{overflow:hidden}
+  .hw-dialog{--teal:#34d3c0; --purple:#a78bfa; width:min(640px,100%); max-height:88vh; overflow-y:auto;
+    background:var(--bg-elev); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);
+    animation:hwUp .28s cubic-bezier(.2,.7,.2,1); -webkit-overflow-scrolling:touch}
+  .hw-head{position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:12px;
+    padding:18px 18px 14px; background:var(--bg-elev); border-bottom:1px solid var(--line)}
+  .hw-hicon{width:40px; height:40px; border-radius:11px; flex:0 0 auto; display:flex; align-items:center;
+    justify-content:center; color:var(--amber); background:var(--amber-soft); border:1px solid var(--amber)}
+  .hw-hicon svg{width:21px; height:21px}
+  .hw-htext{flex:1 1 auto; min-width:0}
+  .hw-htitle{margin:0; font-size:1.12rem; font-weight:600; line-height:1.15}
+  .hw-hsub{margin:2px 0 0; font-family:"JetBrains Mono",monospace; font-size:.6rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-faint)}
+  .hw-close{flex:0 0 auto; width:34px; height:34px; border-radius:10px; cursor:pointer; background:var(--panel);
+    border:1px solid var(--line); color:var(--ink-dim); font-size:1.05rem; line-height:1; display:flex;
+    align-items:center; justify-content:center; transition:border-color .2s, color .2s}
+  .hw-close:hover{border-color:var(--amber); color:var(--ink)}
+
+  .hw-body{padding:16px 18px 20px; display:flex; flex-direction:column; gap:14px}
+  .hw-intro{display:flex; gap:10px; align-items:flex-start; background:var(--panel); border:1px solid var(--line);
+    border-left:3px solid var(--amber); border-radius:11px; padding:11px 13px}
+  .hw-intro svg{flex:0 0 auto; width:18px; height:18px; color:var(--amber); margin-top:1px}
+  .hw-intro p{margin:0; font-size:.82rem; color:var(--ink-dim); line-height:1.4}
+  .hw-intro strong{color:var(--ink); font-weight:600}
+  .hw-mono{font-family:"JetBrains Mono",monospace; color:var(--amber); font-size:.82em}
+
+  .hw-section{--acc:var(--amber); position:relative; background:var(--panel); border:1px solid var(--line);
+    border-radius:13px; padding:16px 16px 14px; overflow:hidden}
+  .hw-section::before{content:""; position:absolute; left:0; top:0; height:3px; width:100%; background:var(--acc); opacity:.9}
+  .hw-sec-head{display:flex; align-items:center; gap:11px; margin-bottom:4px}
+  .hw-sec-icon{width:40px; height:40px; border-radius:11px; flex:0 0 auto; display:flex; align-items:center;
+    justify-content:center; color:var(--acc); background:color-mix(in srgb,var(--acc) 15%, transparent);
+    border:1px solid color-mix(in srgb,var(--acc) 34%, transparent)}
+  .hw-sec-icon svg{width:22px; height:22px}
+  .hw-sec-title{margin:0; font-size:1rem; font-weight:600; line-height:1.15}
+  .hw-sec-note{margin:2px 0 0; font-family:"JetBrains Mono",monospace; font-size:.58rem; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--acc)}
+  /* passos: o número é o 1º item flex; TODO o texto vai dentro de .t (fluxo normal),
+     assim os espaços entre palavras e ícones são preservados */
+  .hw-steps{list-style:none; counter-reset:s; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:11px}
+  .hw-steps li{counter-increment:s; display:flex; align-items:center; gap:11px}
+  .hw-steps li::before{content:counter(s); flex:0 0 auto; width:26px; height:26px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-family:"JetBrains Mono",monospace;
+    font-weight:700; font-size:.8rem; color:#0a0d13; background:var(--acc)}
+  .hw-steps .t{flex:1 1 auto; min-width:0; font-size:.86rem; line-height:1.45; color:var(--ink)}
+  .hw-steps b{font-weight:600}
+  .hw-steps .dim{color:var(--ink-dim); font-size:.92em}
+  .hw-g{display:inline-flex; align-items:center; justify-content:center; vertical-align:-3px; width:20px; height:20px;
+    margin:0 1px; border-radius:5px; color:var(--ink); background:var(--panel-hi); border:1px solid var(--line)}
+  .hw-g svg{width:12px; height:12px}
+  .hw-chip{display:inline-flex; align-items:center; gap:5px; vertical-align:-3px; margin:0 1px; height:22px; padding:0 8px;
+    border-radius:6px; background:var(--amber-soft); color:var(--amber); border:1px solid var(--amber);
+    font-family:"JetBrains Mono",monospace; font-size:.56rem; letter-spacing:.06em; text-transform:uppercase; font-weight:700}
+  .hw-chip svg{width:10px; height:10px}
+  .hw-trouble{background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:14px 16px}
+  .hw-trouble h4{margin:0 0 9px; font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:8px}
+  .hw-trouble h4 svg{width:16px; height:16px; color:var(--alert)}
+  .hw-trouble ul{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:7px}
+  .hw-trouble li{font-size:.8rem; color:var(--ink-dim); line-height:1.4}
+  .hw-trouble li strong{color:var(--ink); font-weight:600}
+  .hw-note{font-size:.74rem; color:var(--ink-faint); line-height:1.45; text-align:center; margin:2px 0 0}
+  @keyframes hwFade{from{opacity:0} to{opacity:1}}
+  @keyframes hwUp{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -273,8 +355,6 @@
         <div class="eyebrow">
           <span class="live-dot" aria-hidden="true"></span>
           <img class="brand-logo" src="data:image/png;base64,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" alt="SESÉ">
-          <span class="label">Apontamento de Produção</span>
-          <span class="chip">EA211</span>
         </div>
         <h1>Central de Apontamentos Operacionais</h1>
         <p class="sub">Acesso rápido aos sistemas de apontamento da linha</p>
@@ -303,8 +383,12 @@
     <footer>
       <span>SESÉ · Uso interno</span>
       <span class="hint">Toque em um cartão para abrir a ferramenta.</span>
+      <button class="howto-btn" id="howtoBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+        Como instalar o app
+      </button>
     </footer>
-    <div class="credit">Desenvolvido por Ivan Carlos Antoneli</div>
+    <div class="credit">Desenvolvido por Engº Ivan Carlos Antoneli</div>
   </div>
 
   <!-- Dica p/ iPhone e iPad (o iOS não oferece botão automático de instalar) -->
@@ -315,13 +399,87 @@
         <rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/>
       </svg>
     </span>
-    <p>Instale na tela de início: toque em <strong>Compartilhar</strong><svg class="shareico" width="14" height="14"
+    <p>Instale na tela de início: toque em <strong>Compartilhar</strong> <svg class="shareico" width="14" height="14"
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
         stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path
         d="M6 12v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg> e depois em
         <strong>Adicionar à Tela de Início</strong>.</p>
     <button class="close" id="iosHintClose" type="button" aria-label="Dispensar dica">✕</button>
   </aside>
+
+  <!-- ===== Modal: Como instalar o app ===== -->
+  <div class="hw-overlay" id="howtoModal" role="dialog" aria-modal="true" aria-labelledby="howtoTitle" aria-hidden="true">
+    <div class="hw-dialog">
+      <div class="hw-head">
+        <span class="hw-hicon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>
+        </span>
+        <div class="hw-htext">
+          <h2 class="hw-htitle" id="howtoTitle">Como instalar o app</h2>
+          <p class="hw-hsub">iPhone · Android · Computador</p>
+        </div>
+        <button class="hw-close" id="howtoClose" type="button" aria-label="Fechar">✕</button>
+      </div>
+      <div class="hw-body">
+        <div class="hw-intro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <p><strong>Abra sempre pelo endereço publicado</strong> (começa com <span class="hw-mono">https://</span>). O app não instala a partir de um arquivo aberto direto no aparelho.</p>
+        </div>
+
+        <!-- iOS -->
+        <section class="hw-section" style="--acc:var(--teal)">
+          <div class="hw-sec-head">
+            <span class="hw-sec-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg></span>
+            <div><h3 class="hw-sec-title">iPhone e iPad</h3><p class="hw-sec-note">Pelo Safari</p></div>
+          </div>
+          <ol class="hw-steps">
+            <li><span class="t">Abra o painel no <b>Safari</b>.</span></li>
+            <li><span class="t">Toque no botão <b>Compartilhar</b> <span class="hw-g" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path d="M6 12v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg></span>.</span></li>
+            <li><span class="t">Toque em <b>Adicionar à Tela de Início</b>.</span></li>
+            <li><span class="t">Confirme em <b>Adicionar</b>.</span></li>
+          </ol>
+        </section>
+
+        <!-- Android -->
+        <section class="hw-section" style="--acc:var(--amber)">
+          <div class="hw-sec-head">
+            <span class="hw-sec-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M10 18.5h4"/></svg></span>
+            <div><h3 class="hw-sec-title">Android</h3><p class="hw-sec-note">Pelo Chrome</p></div>
+          </div>
+          <ol class="hw-steps">
+            <li><span class="t">Abra o painel no <b>Chrome</b>.</span></li>
+            <li><span class="t">Toque no botão <span class="hw-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>Instalar app</span> que aparece no topo do painel.</span></li>
+            <li><span class="t"><span class="dim">Ou</span> abra o menu <span class="hw-g" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></span> e toque em <b>Instalar aplicativo</b>.</span></li>
+            <li><span class="t">Confirme em <b>Instalar</b>.</span></li>
+          </ol>
+        </section>
+
+        <!-- Computador -->
+        <section class="hw-section" style="--acc:var(--purple)">
+          <div class="hw-sec-head">
+            <span class="hw-sec-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg></span>
+            <div><h3 class="hw-sec-title">Computador / Notebook</h3><p class="hw-sec-note">Pelo Chrome ou Edge</p></div>
+          </div>
+          <ol class="hw-steps">
+            <li><span class="t">Abra o painel no <b>Chrome</b> ou no <b>Edge</b>.</span></li>
+            <li><span class="t">Clique no botão <span class="hw-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>Instalar app</span> no topo do painel.</span></li>
+            <li><span class="t"><span class="dim">Ou</span> clique no ícone de instalar <span class="hw-g" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M12 7.5v4"/><path d="m9.8 9.5 2.2 2.2 2.2-2.2"/></svg></span> na barra de endereço.</span></li>
+            <li><span class="t">Clique em <b>Instalar</b>. O painel abre em uma janela própria.</span></li>
+          </ol>
+        </section>
+
+        <div class="hw-trouble">
+          <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg> Não apareceu o botão de instalar?</h4>
+          <ul>
+            <li><strong>Talvez já esteja instalado</strong> — procure o ícone na tela de início / no Menu Iniciar.</li>
+            <li><strong>Confira o endereço</strong> — precisa começar com <span class="hw-mono">https://</span>.</li>
+            <li><strong>Confira o navegador</strong> — iPhone e iPad: Safari; computador: Chrome ou Edge.</li>
+          </ul>
+        </div>
+        <p class="hw-note">Os nomes dos botões podem variar um pouco conforme a versão do navegador.</p>
+      </div>
+    </div>
+  </div>
 
 <script>
   /* ===== Lista de ferramentas — edite aqui =====
@@ -456,6 +614,34 @@
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       });
     }
+  })();
+
+  /* ===== Modal "Como instalar" ===== */
+  (function(){
+    const overlay = document.getElementById("howtoModal");
+    const openBtn = document.getElementById("howtoBtn");
+    const closeBtn = document.getElementById("howtoClose");
+    if (!overlay || !openBtn) return;
+    let lastFocus = null;
+    function open(){
+      lastFocus = document.activeElement;
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.classList.add("hw-lock");
+      if (closeBtn) closeBtn.focus();
+    }
+    function close(){
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("hw-lock");
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    openBtn.addEventListener("click", open);
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) close();
+    });
   })();
 </script>
 </body>
